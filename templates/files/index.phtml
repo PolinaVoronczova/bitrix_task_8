@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/water.min.css">
+    <title>Менеджер файлов на Яндекс.Диске</title>
+</head>
+<body>
+    <h1>Файлы</h1>
+    <style>
+        .alert {
+            padding: 15px;
+            margin: 10px 0;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #3c763d;
+            background-color: #dff0d8;
+            border-color: #d6e9c6;
+        }
+        .alert-error {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+    </style>
+    <?php if (!empty($flash)): ?>
+        <?php foreach ($flash as $type => $messages): ?>
+            <?php foreach ($messages as $message): ?>
+                <div class="alert alert-<?= $type ?>"><?= htmlspecialchars($message) ?></div>
+            <?php endforeach ?>
+        <?php endforeach ?>
+    <?php endif ?>
+    <form action="/files/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file">
+        <button type="submit">Загрузить</button>
+    </form>
+    
+    <table border="1">
+        <tr>
+            <th>Имя</th>
+            <th>Тип</th>
+            <th>Размер</th>
+            <th>Действия</th>
+        </tr>
+        <?php foreach ($files as $file): ?>
+        <tr>
+            <td><?= htmlspecialchars($file['name']) ?></td>
+            <td><?= htmlspecialchars($file['type']) ?></td>
+            <td><?= $file['type'] == 'file' ? htmlspecialchars($file['size']) : '-' ?></td>
+            <td>
+                <a href="/files/rename?path=<?= rawurlencode($file['path']) ?>">Переименовать</a>
+                <form action="/files/delete" method="POST" style="display: inline;">
+                    <input type="hidden" name="path" value="<?= htmlspecialchars($file['path']) ?>">
+                    <button type="submit">Удалить</button>
+                </form>
+            </td>
+        </tr>
+        <?php endforeach; ?>
+    </table>
+</body>
+</html>
